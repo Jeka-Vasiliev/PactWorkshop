@@ -17,6 +17,10 @@ namespace SushiCashier
 				var responseText = await response.Content.ReadAsStringAsync();
 				Console.WriteLine($"Sushi response: {responseText}");
 			}
+
+			var orderedRolls = await client.GetTotalOrderedRolls();
+
+			Console.WriteLine($"Ordered rolls = ${orderedRolls}");
 		}
 	}
 }
