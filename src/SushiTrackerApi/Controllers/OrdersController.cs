@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Threading;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using SushiTrackerApiContracts;
@@ -17,7 +14,7 @@ namespace SushiTrackerApi.Controllers
 		const int DiscountRollPrice = 9;
 
 		private readonly ILogger<OrdersController> _logger;
-		
+
 		public OrdersController(ILogger<OrdersController> logger)
 		{
 			_logger = logger;
@@ -28,7 +25,7 @@ namespace SushiTrackerApi.Controllers
 		{
 			return Ok();
 		}
-		
+
 		[HttpPost]
 		public IActionResult Create([FromBody] CreateOrderRequest createOrderRequest)
 		{
@@ -37,17 +34,11 @@ namespace SushiTrackerApi.Controllers
 				return BadRequest($"Rolls count is low. Minimal rolls count is {MinimalRollsCount}");
 			}
 
-			if (createOrderRequest.IsMobileApp)
-			{
-				return new JsonResult(new CreateOrderResponse()
-				{
-					OrderPrice = createOrderRequest.RollsCount * DiscountRollPrice
-				});
-			}
-			
 			return new JsonResult(new CreateOrderResponse()
 			{
-				OrderPrice = createOrderRequest.RollsCount * FullRollPrice
+				OrderPrice = createOrderRequest.IsMobileApp
+					? createOrderRequest.RollsCount * DiscountRollPrice
+					: createOrderRequest.RollsCount * FullRollPrice
 			});
 		}
 	}
