@@ -37,5 +37,21 @@ namespace SushiCashier
                 throw new Exception("There was a problem connecting to Provider API.", ex);
             }
         }
+
+        public async Task<int> GetTotalOrderedRolls()
+        {
+            using var client = new HttpClient { BaseAddress = new Uri(_sushiTrackerUri)};
+            
+            try
+            {
+                   
+                var response = await client.GetAsync($"/api/orders/total_rolls");
+                return int.Parse(await response.Content.ReadAsStringAsync());
+            }
+            catch (Exception ex)
+            {
+                throw new Exception("There was a problem connecting to Provider API.", ex);
+            }
+        }
     }
 }

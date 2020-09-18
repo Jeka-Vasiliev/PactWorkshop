@@ -109,5 +109,60 @@ namespace SushiCashier.ConsumerTests
 			Assert.Equal(HttpStatusCode.OK, result.StatusCode);
 			Assert.Equal(234, response.OrderPrice);
 		}
+
+		[Fact]
+		public async Task ItShouldResponseWithNumberOfOrderedRolls()
+		{
+			_mockProviderService.Given("There is data")
+				.UponReceiving("A valid POST request for cashier app for create cashier order")
+				.With(new ProviderServiceRequest
+				{
+					Method = HttpVerb.Post,
+					Path = "/api/orders",
+					Headers = new Dictionary<string, object>
+					{
+						{"Content-Type", "application/json; charset=utf-8"}
+					},
+					Body = new
+					{
+						IsMobileApp = false,
+						RollsCount = 6,
+					}
+				})
+				.WillRespondWith(new ProviderServiceResponse
+				{
+					Headers = new Dictionary<string, object>
+					{
+						{"Content-Type", "application/json; charset=utf-8"}
+					},
+					Status = 200,
+					Body = new // think about serialization
+					{
+						orderPrice = 234,
+					}
+				});		
+			
+			_mockProviderService.Given("There is data")
+				.UponReceiving("A valid GET request for cashier app for get rolls count")
+				.With(new ProviderServiceRequest
+				{
+					Method = HttpVerb.Get,
+					Path = "/api/orders/total_rolls",
+				})
+				.WillRespondWith(new ProviderServiceResponse
+				{
+					Headers = new Dictionary<string, object>
+					{
+						{"Content-Type", "application/json; charset=utf-8"}
+					},
+					Status = 200,
+					Body = 6
+				});
+			
+			var result = await _sushiTrackerApiClient.CreateCashierOrder(6);
+			var totalOrderedRolls = await _sushiTrackerApiClient.GetTotalOrderedRolls();
+			
+			Assert.Equal(6, totalOrderedRolls);
+		}
 	}
 }
