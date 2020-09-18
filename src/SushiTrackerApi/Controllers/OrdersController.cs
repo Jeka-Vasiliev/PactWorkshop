@@ -38,7 +38,7 @@ namespace SushiTrackerApi.Controllers
 
 			Interlocked.Add(ref _totalOrderedRolls, createOrderRequest.RollsCount);
 
-			return new JsonResult(new CreateOrderResponse()
+			return new JsonResult(new CreateOrderResponse
 			{
 				OrderPrice = createOrderRequest.IsMobileApp
 					? createOrderRequest.RollsCount * DiscountRollPrice
