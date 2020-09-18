@@ -72,7 +72,7 @@ namespace SushiCashier.ConsumerTests
 		public async Task ItResponseOkIfMore6RollsOrdered()
 		{
 			_mockProviderService.Given("There is data")
-				.UponReceiving("A valid POST request for mobile app for create cashier order")
+				.UponReceiving("A valid POST request for cashier app for create cashier order")
 				.With(new ProviderServiceRequest
 				{
 					Method = HttpVerb.Post,
@@ -91,13 +91,13 @@ namespace SushiCashier.ConsumerTests
 				{
 					Headers = new Dictionary<string, object>
 					{
-						{"Content-Type", "text/plain; charset=utf-8"}
+						{"Content-Type", "application/json; charset=utf-8"}
 					},
 					Status = 200,
-					Body = JsonConvert.SerializeObject(new CreateOrderResponse
+					Body = new // think about serialization
 					{
-						OrderPrice = 234,
-					})
+						orderPrice = 234,
+					}
 				});
 			
 			// Act
