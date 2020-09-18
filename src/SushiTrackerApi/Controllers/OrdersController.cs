@@ -13,6 +13,8 @@ namespace SushiTrackerApi.Controllers
 		const int FullRollPrice = 39;
 		const int DiscountRollPrice = 9;
 
+		private static int _totalOrderedRolls = 0;
+
 		private readonly ILogger<OrdersController> _logger;
 
 		public OrdersController(ILogger<OrdersController> logger)
@@ -34,12 +36,20 @@ namespace SushiTrackerApi.Controllers
 				return BadRequest($"Rolls count is low. Minimal rolls count is {MinimalRollsCount}");
 			}
 
+			Interlocked.Add(ref _totalOrderedRolls, createOrderRequest.RollsCount);
+
 			return new JsonResult(new CreateOrderResponse()
 			{
 				OrderPrice = createOrderRequest.IsMobileApp
 					? createOrderRequest.RollsCount * DiscountRollPrice
 					: createOrderRequest.RollsCount * FullRollPrice
 			});
+		}
+
+		[HttpGet("total_rolls")]
+		public int TotalOrderedRolls()
+		{
+			return _totalOrderedRolls;
 		}
 	}
 }
